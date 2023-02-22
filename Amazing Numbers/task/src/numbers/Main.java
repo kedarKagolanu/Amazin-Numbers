@@ -8,27 +8,40 @@ public class Main {
         return ( d > 0 && (d % 1) == 0);
     }
 
-    static void printNumberParity(double num) {
-        if(num%2 == 0) {
-            System.out.println("This number is Even.");
-        } else {
-            System.out.println("This number is Odd.");
-        }
+    static boolean isEven(double num) {
+        return num % 2 == 0;
     }
 
-    static boolean isDivisible(double num) {
-        System.out.println("--"+num);
+    static boolean isDivisibleBy7(double num) {
         if( num < 10) {
             return (num % 7) == 0;
         } else {
             int lastDigit = (int)num % 10;
             int reducedDigit = (int)(num - lastDigit) / 10;
-            return isDivisible(reducedDigit - 2*lastDigit);
+            return isDivisibleBy7(reducedDigit - 2*lastDigit);
         }
     }
 
     static boolean endsWith7(double num) {
         return (num % 10) == 7;
+    }
+
+    static boolean isBuzzNumber(double num) {
+        return isDivisibleBy7(num) || endsWith7(num);
+    }
+
+    static boolean isDuckNumber(double num ) {
+        double temp = num;
+        double lastDigit;
+        while(temp > 0) {
+            lastDigit = temp % 10;
+            if(lastDigit == 0) {
+                return true;
+            }
+            temp -= lastDigit;
+            temp = temp / 10;
+        }
+        return false;
     }
 
     public static void main(String[] args) {
@@ -37,29 +50,26 @@ public class Main {
         System.out.println("Enter a natural number:");
         double input = in.nextInt();
 
+        // natural number checking
         if(!isNatural(input)) {
             System.out.println("This number is not natural!");
             return;
+        }
+        System.out.println("Properties of " + input);
+
+        //even nd odd parity checking
+        if(isEven(input)) {
+            System.out.println("even: true");
+            System.out.println(" odd: false");
         } else {
-            printNumberParity(input);
+            System.out.println("even: false");
+            System.out.println(" odd: true");
         }
 
-        if(endsWith7(input) || isDivisible(input)) {
-            System.out.println("It is a Buzz number.");
-        } else {
-            System.out.println("It is not a Buzz number.");
-        }
+        // buzz number checking
+        System.out.println("buzz: " + isBuzzNumber(input));
 
-        System.out.println("Explanation:");
-        if(endsWith7(input) && isDivisible((int)input)) {
-            System.out.println(input + " is divisible by 7 and ends with 7.");
-        } else if(endsWith7((int)input)) {
-            System.out.println(input + " ends with 7.");
-        } else if(isDivisible(input)) {
-            System.out.println(input + "is divisible by 7.");
-        } else {
-            System.out.println(input + " is neither divisible by 7 nor does it end with 7.");
-        }
-
+        //duck number checking
+        System.out.println("duck: " + isDuckNumber(input));
     }
 }
