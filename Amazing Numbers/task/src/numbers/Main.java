@@ -1,6 +1,7 @@
 package numbers;
 
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
 
 public class Main {
 
@@ -61,46 +62,114 @@ public class Main {
         return num == reverseNumber(num);
     }
 
+    static boolean isGapfulNumber(long num) {
+        String str = String.valueOf(num);
+        long firstdigit = Character.digit(str.charAt(0),10);
+        return (num > 99) && (num % (firstdigit*10 + num%10) == 0);
+    }
+
     public static void main(String[] args) {
 //      write your code here
         Scanner in = new Scanner(System.in);
-        long input;
-
+        String inputArguements;
+        long input1,input2;
+        boolean hasSecondInput;
         System.out.println("Welcome to Amazing Numbers!\n");
-        System.out.println("Supported requests:");
-        System.out.println("- enter a natural number to know its properties;");
-        System.out.println("- enter 0 to exit.\n");
 
-        do{
-            System.out.print("Enter a request: ");
-            input = in.nextLong();
+        while(true) {
+            System.out.println("Supported requests:");
+            System.out.println("- enter a natural number to know its properties;");
+            System.out.println("- enter two natural numbers to obtain the properties of the list:");
+            System.out.println("  * the first parameter represents a starting number;");
+            System.out.println("  * the second parameter shows how many consecutive numbers are to be processed;");
+            System.out.println("- separate the parameters with one space;");
+            System.out.println("- enter 0 to exit.\n");
 
-            // natural number checking
-            if(!isNatural(input)) {
-                System.out.println("\nThe first parameter should be a natural number or zero.\n");
-                continue;
-            }
-            System.out.println("\nProperties of " + input);
+            do{
+                input2 = 1;
+                hasSecondInput = false;
+                System.out.print("Enter a request: ");
+                inputArguements = in.nextLine();
 
-            //even nd odd parity checking
-            if(isEven(input)) {
-                System.out.println("       even: true");
-                System.out.println("        odd: false");
-            } else {
-                System.out.println("       even: false");
-                System.out.println("        odd: true");
-            }
+                if(inputArguements.isBlank()) {
+                    break;
+                }
 
-            // buzz number checking
-            System.out.println("       buzz: " + isBuzzNumber(input));
+                StringTokenizer st = new StringTokenizer(inputArguements);
+                input1 = Long.parseLong(st.nextToken());
+                if(st.hasMoreTokens()) {
+                    input2 = Long.parseLong(st.nextToken());
+                    hasSecondInput = true;
+                }
+                if(input1 == 0) {
+                    System.out.println("Goodbye!");
+                    System.exit(0);
+                }
+                if(!isNatural(input1)) {
+                    System.out.println("\nThe first parameter should be a natural number or zero.\n");
+                    continue;
+                }
 
-            //duck number checking
-            System.out.println("       duck: " + isDuckNumber(input));
+                if(!isNatural(input2)) {
+                    System.out.println("\nThe second parameter should be a natural number.\n");
+                    continue;
+                }
 
-            //palindrome number checking
-            System.out.println("palindromic: " + isPalindrome(input));
-            System.out.println();
+                if(!hasSecondInput) {
+                    // natural number checking
+                    System.out.println("\nProperties of " + input1);
 
-        }while(input != 0);
+                    // buzz number checking
+                    System.out.println("       buzz: " + isBuzzNumber(input1));
+
+                    //duck number checking
+                    System.out.println("       duck: " + isDuckNumber(input1));
+
+                    //palindrome number checking
+                    System.out.println("palindromic: " + isPalindrome(input1));
+                    System.out.println();
+
+                    //gapeful number checking
+                    System.out.println("     gapful: " + isGapfulNumber(input1));
+
+                    //even nd odd parity checking
+                    if(isEven(input1)) {
+                        System.out.println("       even: true");
+                        System.out.println("        odd: false");
+                    } else {
+                        System.out.println("       even: false");
+                        System.out.println("        odd: true");
+                    }
+                } else {
+                    long temp;
+                    List<String> properties = new ArrayList<>(5);
+                    for(int i=0;i<input2;i++) {
+                        temp = input1 + i;
+                        if(isBuzzNumber(temp)) properties.add("buzz");
+
+                        if(isDuckNumber(temp)) properties.add("duck");
+
+                        if(isPalindrome(temp)) properties.add("palindromic");
+
+                        if(isGapfulNumber(temp)) properties.add("gapful");
+
+                        if(isEven(temp))
+                            properties.add("even");
+                        else
+                            properties.add("odd");
+
+                        System.out.print("             " + temp + " is ");
+                        for(int j=0;j<=properties.size()-2;j++) {
+                            System.out.print(properties.get(j) + ", ");
+                        }
+                        System.out.print(properties.get(properties.size()-1));
+                        System.out.println();
+
+                        properties.clear();
+                    }
+                }
+
+            }while(true);
+        }
     }
 }
