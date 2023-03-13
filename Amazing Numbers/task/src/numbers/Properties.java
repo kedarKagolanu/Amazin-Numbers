@@ -1,7 +1,10 @@
 package numbers;
 
-import java.util.EnumMap;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.LongPredicate;
+import java.util.stream.Collectors;
 
 public enum Properties{
     BUZZ(PropertiesMethods::isBuzzNumber),
@@ -20,14 +23,21 @@ public enum Properties{
         this.validate = lp;
     }
 
-    public LongPredicate getLongPredicate() {
-        return validate;
+    public static List<Properties> getProperties(long num) {
+        return Arrays.stream(Properties.values())
+                .filter(p -> p.validate.test(num))
+                .collect(Collectors.toList());
     }
 
-    public static boolean has(String input3) {
-        for(Properties p: Properties.values()) {
-            if(p.name().equals(input3)) return true;
-        }
-        return false;
+    public LongPredicate getPredicate() { return validate; }
+
+    public static Optional<Properties> getProperty(String input3) {
+        return Arrays.stream(Properties.values())
+                .filter(p -> p.toString().equals(input3))
+                .findAny();
+    }
+
+    static boolean isProperty(String input3) {
+        return getProperty(input3.toUpperCase()).isPresent();
     }
 }

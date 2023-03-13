@@ -7,57 +7,64 @@ public class Main {
     public static void main(String[] args) {
 //      write your code here
         Scanner in = new Scanner(System.in);
-        String inputArguements;
-        long input1,input2;
-        String input3 = null;
-        boolean hasSecondInput,hasThirdInput;
+        BitSet inputStatus = new BitSet(4);
         System.out.println("Welcome to Amazing Numbers!\n");
 
         OutputMethods.printSupportedRequests();
 
         while(true){
-            input2 = 0;
-            hasSecondInput = false;
-            hasThirdInput = false;
-            System.out.print("\nEnter a request: ");
-            inputArguements = in.nextLine();
+            try {
+                System.out.print("\nEnter a request: ");
+                String[] input = in.nextLine().split(" ");
 
-            if(inputArguements.isBlank()) {
-                OutputMethods.printSupportedRequests();
-                continue;
-            }
-
-            StringTokenizer st = new StringTokenizer(inputArguements);
-            input1 = Long.parseLong(st.nextToken());
-            if(st.hasMoreTokens()) {
-                input2 = Long.parseLong(st.nextToken());
-                hasSecondInput = true;
-            }
-            if(st.hasMoreTokens()) {
-                input3 = st.nextToken().toUpperCase();
-                hasThirdInput = true;
-            }
-
-            if(input1 == 0) {
-                System.out.println("Goodbye!");
-                System.exit(0);
-            }
-
-            if(!Validation.isValidInput(input1,false)) { continue; }
-
-            if(hasSecondInput && !Validation.isValidInput(input2,true)) { continue; }
-
-            if(hasThirdInput && !(Validation.isValidInput(input3))) { continue; }
-
-            if(!hasSecondInput || input2 == 0) {
-                OutputMethods.printProperties(input1);
-            } else {
-                if(!hasThirdInput)
-                    OutputMethods.printProperties(input1,input2);
-                else {
-                    OutputMethods.printProperties(input1,input2,input3);
+                if(input.length == 0) {
+                    OutputMethods.printSupportedRequests();
+                    continue;
                 }
+
+                if(input[0].equals("0")) {
+                    break;
+                }
+
+                for(int i=0;i<input.length;i++) {
+                    inputStatus.set(i,true);
+                }
+
+                if (!(Validation.isNatural(input[0])))
+                    throw new IllegalArgumentException("The first parameter should be a natural number or zero.");
+
+                if (inputStatus.get(1))
+                    if(!Validation.isNatural(input[1]))
+                        throw new IllegalArgumentException("The second parameter should be a natural number.");
+
+
+                switch(inputStatus.length()) {
+                    case 1 :
+                        OutputMethods.printNumberProperties(input);
+                        break;
+                    case 2 :
+                        OutputMethods.printRangedProperties(input);
+                        break;
+                    case 3 :
+                        if(Validation.isValid(input[2])) {
+                            OutputMethods.printRangedPropertiesWithFilter(input);
+                        }
+                        break;
+                    case 4 :
+                        if(Validation.areValid(input[2],input[3],inputStatus)) {
+                            OutputMethods.printRangedPropertiesWithFilters(input);
+                        }
+                        break;
+                }
+            } catch(IllegalArgumentException e) {
+                System.out.println(e.getMessage());
             }
+
+            inputStatus.clear();
         }
+
+
+
+        System.out.println("GoodBye!");
     }
 }

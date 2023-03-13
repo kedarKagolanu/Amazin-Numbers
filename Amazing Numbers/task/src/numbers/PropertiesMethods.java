@@ -90,6 +90,6 @@ public class PropertiesMethods {
 
     static boolean isSquareNumber(long num) {
         double temp = Math.sqrt(num);
-        return num != Math.floor(temp);
+        return temp == Math.floor(temp);
     }
 }
