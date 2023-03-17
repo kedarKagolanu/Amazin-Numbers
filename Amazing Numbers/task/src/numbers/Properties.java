@@ -15,7 +15,8 @@ public enum Properties{
     EVEN(PropertiesMethods::isEven),
     ODD(PropertiesMethods::isOdd),
     SQUARE(PropertiesMethods::isSquareNumber),
-    SUNNY(PropertiesMethods::isSunnyNumber);
+    SUNNY(PropertiesMethods::isSunnyNumber),
+    JUMPING(PropertiesMethods::isJumpingNumber);
 
     final private LongPredicate validate;
 
@@ -23,13 +24,19 @@ public enum Properties{
         this.validate = lp;
     }
 
-    public static List<Properties> getProperties(long num) {
-        return Arrays.stream(Properties.values())
-                .filter(p -> p.validate.test(num))
-                .collect(Collectors.toList());
-    }
-
     public LongPredicate getPredicate() { return validate; }
+
+    public static List<LongPredicate> getPredicates(String[] input) {
+
+        return Arrays.stream(input)
+                .map(String::toUpperCase)
+                .map(Properties::getProperty)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(Properties::getPredicate)
+                .collect(Collectors.toList());
+
+    }
 
     public static Optional<Properties> getProperty(String input3) {
         return Arrays.stream(Properties.values())
@@ -38,6 +45,13 @@ public enum Properties{
     }
 
     static boolean isProperty(String input3) {
-        return getProperty(input3.toUpperCase()).isPresent();
+        try {
+            Properties.valueOf(input3);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+
+        return true;
     }
+
 }

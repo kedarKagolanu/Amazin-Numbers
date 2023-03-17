@@ -89,7 +89,20 @@ public class PropertiesMethods {
     }
 
     static boolean isSquareNumber(long num) {
-        double temp = Math.sqrt(num);
-        return temp == Math.floor(temp);
+        double squareRoot = Math.sqrt(num);
+        return squareRoot == Math.floor(squareRoot);
+    }
+
+    static boolean isJumpingNumber(long num) {
+        long lastdigit,adjacentdigit;
+        while(num > 9) {
+            lastdigit = num%10;
+            num /= 10;
+            adjacentdigit = num%10;
+            if(Math.abs(adjacentdigit - lastdigit) != 1) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -1,6 +1,9 @@
 package numbers;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.function.LongPredicate;
+import java.util.function.Predicate;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
@@ -32,6 +35,8 @@ public class OutputMethods {
 
         System.out.println("     square: " + isSquareNumber(temp));
         System.out.println("      sunny: " + isSunnyNumber(temp));
+
+        System.out.println("    jumping: " + isJumpingNumber(temp));
         //even nd odd parity checking
         if(isEven(temp)) {
             System.out.println("       even: true");
@@ -50,9 +55,10 @@ public class OutputMethods {
         String spy = isSpyNumber(temp) ? "spy, " : "";
         String square = isSquareNumber(temp) ? "square, " : "";
         String sunny = isSunnyNumber(temp) ? "sunny, " : "";
+        String jumping = isJumpingNumber(temp) ? "jumping, " : "";
         String even = isEven(temp) ? "even" : "odd";
 
-        System.out.printf("\t\t  %d is %s%s%s%s%s%s%s%s\n", temp, buzz, duck, palindromic, gapful, spy, square, sunny, even);
+        System.out.printf("\t\t  %d is %s%s%s%s%s%s%s%s%s\n", temp, buzz, duck, palindromic, gapful, spy, square, jumping, sunny, even);
     }
 
     static void printRangedProperties(String[] input) {
@@ -65,33 +71,23 @@ public class OutputMethods {
         }
     }
 
-    static void printRangedPropertiesWithFilter(String[] input) {
-        long counter = Long.parseLong(input[1]);
-        long start = Long.parseLong(input[0]);
-        Optional<Properties> p = Properties.getProperty(input[2].toUpperCase());
-        if(p.isPresent()) {
-            Stream.iterate(start, n -> n + 1)
-                    .filter(n -> p.get().getPredicate().test(n))
-                    .limit(counter)
-                    .forEach(OutputMethods::printInLine);
-
-        }
-    }
-
     static void printRangedPropertiesWithFilters(String[] input) {
         long counter = Long.parseLong(input[1]);
         long start = Long.parseLong(input[0]);
 
-        Optional<Properties> property1 = Properties.getProperty(input[2].toUpperCase());
-        Optional<Properties> property2 = Properties.getProperty(input[3].toUpperCase());
-        if(property1.isPresent() && property2.isPresent()) {
-            Stream.iterate(start, n -> n + 1)
-                    .filter(n -> (property1.get().getPredicate().test(n)
-                            && property2.get().getPredicate().test(n)))
-                    .limit(counter)
-                    .forEach(OutputMethods::printInLine);
+        var predicates = Properties.getPredicates(input);
 
-        }
+        Stream.iterate(start, n -> n + 1)
+                .filter(n -> processingInput(n,predicates))
+                .limit(counter)
+                .forEach(OutputMethods::printInLine);
+
+    }
+
+    static boolean processingInput(long input, List<LongPredicate> predicates) {
+        //https://stackoverflow.com/questions/60121926/how-to-iterate-a-list-of-predicates
+
+        return predicates.stream().allMatch(predicate -> predicate.test(input));
     }
 
     static void printSupportedRequests() {
