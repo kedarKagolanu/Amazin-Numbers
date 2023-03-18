@@ -16,7 +16,9 @@ public enum Properties{
     ODD(PropertiesMethods::isOdd),
     SQUARE(PropertiesMethods::isSquareNumber),
     SUNNY(PropertiesMethods::isSunnyNumber),
-    JUMPING(PropertiesMethods::isJumpingNumber);
+    JUMPING(PropertiesMethods::isJumpingNumber),
+    HAPPY(PropertiesMethods::isHappyNumber),
+    SAD(PropertiesMethods::isSadNumber);
 
     final private LongPredicate validate;
 
@@ -26,9 +28,10 @@ public enum Properties{
 
     public LongPredicate getPredicate() { return validate; }
 
-    public static List<LongPredicate> getPredicates(String[] input) {
+    public static List<LongPredicate> getPredicates(List<String> input) {
 
-        return Arrays.stream(input)
+        return input.stream()
+                .map(OutputMethods::clean)
                 .map(String::toUpperCase)
                 .map(Properties::getProperty)
                 .filter(Optional::isPresent)

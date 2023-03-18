@@ -1,7 +1,8 @@
 package numbers;
 
-public class PropertiesMethods {
+import java.util.HashSet;
 
+public class PropertiesMethods {
     static boolean isEven(long num) {
         return num % 2 == 0;
     }
@@ -94,15 +95,42 @@ public class PropertiesMethods {
     }
 
     static boolean isJumpingNumber(long num) {
-        long lastdigit,adjacentdigit;
-        while(num > 9) {
-            lastdigit = num%10;
+        long lastdigit, adjacentdigit;
+        while (num > 9) {
+            lastdigit = num % 10;
             num /= 10;
-            adjacentdigit = num%10;
-            if(Math.abs(adjacentdigit - lastdigit) != 1) {
+            adjacentdigit = num % 10;
+            if (Math.abs(adjacentdigit - lastdigit) != 1) {
                 return false;
             }
         }
         return true;
+    }
+
+    static boolean isHappyNumber(long num) {
+        long nextSequenceNumber=0;
+        long temp = num;
+        long buffer;
+        HashSet<Long> list = new HashSet<>();
+        list.add(temp);
+        while(true) {
+            while(temp > 0) {
+                buffer = temp % 10;
+                nextSequenceNumber +=  buffer * buffer;
+                temp /= 10;
+            }
+            if(nextSequenceNumber == 1)
+                return true;
+            else if(list.contains(nextSequenceNumber))
+                return false;
+
+            list.add(nextSequenceNumber);
+            temp = nextSequenceNumber;
+            nextSequenceNumber = 0;
+        }
+    }
+
+    static boolean isSadNumber(long num) {
+        return !isHappyNumber(num);
     }
 }
